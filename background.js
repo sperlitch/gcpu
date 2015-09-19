@@ -2,9 +2,7 @@ var checkInterval = 1500,
 		notified = false,
 		highUsage = 70,
 		prevCPUinfo = false,
-		percentageStats = [],
-		newVar,
-		high = 100;
+		percentageStats = [];
 
 function options() { 
 	chrome.storage.sync.get({
@@ -12,13 +10,11 @@ function options() {
 		highUsage: 70,
 		checkInterval: 3300,
 		duration: 120000,
-		high: 100
 	}, function(items) {
 		duration = items.duration;
 		checkInterval = items.checkInterval;
 		highUsage = items.highUsage;
 
-		high = items.high;
 		console.log(items);
 	});
 };

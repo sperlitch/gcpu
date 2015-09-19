@@ -1,15 +1,11 @@
 var app = true;
 
 chrome.storage.sync.get({
-	high: 100,
-	browserinterval: 1,
 	// me
 	duration: 120000,
 	checkInterval: 1000,
 	highUsage: 70
 }, function(items) {
-	document.querySelector("#browserinterval").value = items.browserinterval;
-	document.querySelector("#notify").value = items.high;
 	// me
 	document.querySelector("#checkInterval").value = items.checkInterval / 1000;
 	document.querySelector("#highUsage").value = items.highUsage;
@@ -27,9 +23,6 @@ document.querySelector("form").addEventListener("submit", function(event) {
 
 	// SET
 	chrome.storage.sync.set({
-		browserinterval: document.querySelector("#browserinterval").value,
-		high: document.querySelector("#notify").value,
-
 		checkInterval: document.querySelector("#checkInterval").value * 1000,
 		highUsage: document.querySelector('#highUsage').value,
 		duration: document.querySelector('#duration').value * 60000
