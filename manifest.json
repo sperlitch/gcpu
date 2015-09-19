@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Simple CPU",
+  "version": "1.0.0",
+  "description": "Icon turns red when CPU has been running high for a while.",
+  "icons": { 
+		"128": "img/icon128.png"
+	},
+  "browser_action": { 
+    "default_icon": {
+      "19": "img/icon19-gray.png",
+      "38": "img/icon38-gray.png"
+    },
+		"default_popup": "popup.html"
+	},
+  "author": "Scott Perlitch",
+	"background": {
+    "scripts": [
+			"background.js"
+		],
+    "persistent": false
+  },
+  "options_page": "options.html",
+  "permissions": [
+		"system.cpu",
+		"storage",
+		"contextMenus",
+		"unlimitedStorage",
+		"notifications"
+	]
+}
