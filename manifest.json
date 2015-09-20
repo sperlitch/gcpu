@@ -16,7 +16,6 @@
   "author": "Scott Perlitch",
 	"background": {
     "scripts": [
-			"settings.js",
 			"background.js"
 		],
     "persistent": false
