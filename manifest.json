@@ -16,6 +16,7 @@
   "author": "Scott Perlitch",
 	"background": {
     "scripts": [
+			"settings.js",
 			"background.js"
 		],
     "persistent": false
@@ -24,6 +25,7 @@
   "permissions": [
 		"system.cpu",
 		"storage",
+		"alarms",
 		"contextMenus",
 		"unlimitedStorage",
 		"notifications"
