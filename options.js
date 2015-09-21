@@ -57,15 +57,14 @@
         highUsage: el.highUsage.value,
         duration: el.duration.value
       }, function() {
-        el.flash.setAttribute('class', 'alert-success');
-        //el.flash.style.display = 'none'
+        el.flash.style.display = 'block'
       } );
     },
 
     clearStorage: function(event) {
       event.preventDefault();
       chrome.storage.sync.clear(function(){
-        el.flash.setAttribute('class', 'alert-success');
+        el.flash.style.display = 'block'
       });
     }
   }

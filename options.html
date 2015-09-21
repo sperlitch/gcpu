@@ -3,35 +3,72 @@
   <head>
     <title>Simple CPU Options</title>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
     <style>
+      h1 {
+        font-family: 'Oxygen', sans-serif;
+          color: darkgrey;
+            margin-bottom: 50px;
+      }
+      .alert {
+        display: none;
+      }
+      .form-actions {
+        margin-top: 50px;
+      }
+      .form-actions .input-group {
+        margin: 0;
+      }
+      img {
+        margin: 0 10px;
+      }
+      .form-actions input {
+        margin-right: 10px;
+      }
+      label {
+        font-weight: normal;
+      }
     </style>
   </head>
   <body>
-    <h1>Simple CPU Options</h1>
-    <div class="alert" role="alert">...</div>
-    <form>
-
-      <!--<form class="form-inline">
+    <div class="container">
+      <h1>cpu Options</h1>
+      <div class="alert alert-success" role="alert">Saved.</div>
+      <form class="form-horizontal">
         <div class="form-group">
-          <label for="exampleInputEmail1">When my cpu usage goes over: </label>
-          <div class="input-group">
-            <input type="number" class="form-control" min="0" max="100" step="1" id="highUsage" value="">
-            <div class="input-group-addon">%</div>
-          </div>
-          <div class="input-group">
-            <input type="number" class="form-control" min="0" max="100" step="1" id="highUsage" value="">
-            <div class="input-group-addon">minutes</div>
+          <label for="highUsage" class="col-sm-2 control-label">If my CPU stays above</label>
+          <div class="controls col-md-4">
+            <div class="input-group">
+              <input type="number" class="form-control" min="0" max="100" step="1" id="highUsage" value="">
+              <span class="input-group-addon">%</span>
+            </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-        </form> -->
-
-      <p>If my CPU stays above <input type="number" min="0" max="100" step="1" id="highUsage" value="">%
-      for <input type="number" min="0" max="100" step="1" id="duration" value="5"> minutes,
-      change icon to <img src="img/icon38-red.png"/>
-      <p><input type="submit" value="Save"></p>
-      <p><input type="reset" value="Reset"></p>
-    </form>
+        <div class="form-group">
+          <label for="duration" class="col-sm-2 control-label">for</label>
+          <div class="controls col-md-4">
+            <div class="input-group">
+              <input type="number" class="form-control" min="0" max="100" step="1" id="duration" value="">
+              <span class="input-group-addon">minutes</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            The
+            <img src="img/icon128.png" width="40px">
+            icon will turn to
+            <img src="img/icon128-red.png" width="40px">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Save</button>
+            <button type="reset" class="btn btn-default">Reset</button>
+          </div>
+        </div>
+      </form>
+    </div>
     <script src="options.js"></script>
   </body>
 </html>
