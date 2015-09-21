@@ -1,7 +1,7 @@
 (function() {
   var s,   
   CPU = {
-   
+
     settings: {
       delay: 0.1,
       duration: 1,
@@ -15,22 +15,38 @@
       this.percentageStats = [];
       this.prevCPUinfo = null,
       this.setOptions();
+      this.setOnOptionsChange();
       this.setAlarm();
-      chrome.storage.onChanged.addListener(this.setOptions());
     },
 
     setOptions: function setOptions() {
-      chrome.storage.sync.get(
-          {
+      chrome.storage.sync.get({
+        highUsage:      s.highUsage,
+        duration:       s.duration,
+        checkInterval:  s.checkInterval,
+      }, function(syncedItems) {
+        s.duration =      syncedItems.duration;
+        s.checkInterval = syncedItems.checkInterval;
+        s.highUsage =     syncedItems.highUsage;
+        console.log(syncedItems);
+      });
+    },
+
+    setOnOptionsChange: function() {
+      chrome.storage.onChanged.addListener(
+        function() {
+          chrome.storage.sync.get({
             highUsage:      s.highUsage,
             duration:       s.duration,
             checkInterval:  s.checkInterval,
-          }, 
-          function(syncedItems) {
+          }, function(syncedItems) {
             s.duration =      syncedItems.duration;
             s.checkInterval = syncedItems.checkInterval;
             s.highUsage =     syncedItems.highUsage;
-          });
+            console.log(syncedItems);
+          })
+        }
+      );
     },
 
     setAlarm: function setAlarm() {
@@ -45,6 +61,7 @@
     },
 
     updateStats: function updateStats() {
+      console.log(this.settings);
       var self = this,
           totalUsage = 0,
           i = 0,
