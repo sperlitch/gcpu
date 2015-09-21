@@ -1,46 +1,75 @@
 (function() {
-	var duration = 1,
-			intervals = 4,
-			checkInterval = duration / intervals,
-			highUsage = 70,
-			$ = function(el) { return document.querySelector(el); };
 
-	chrome.storage.sync.get(
-			{
-				highUsage: highUsage,
-				duration: duration,
-				checkInterval: checkInterval,
-			},
-			function(items) {
-				$("#highUsage").value = items.highUsage;
-				$("#duration").value = items.duration;
-				console.log('options.js', items);
-			}
-	);
+  var s,
+  Opts = {
 
-	$("form").addEventListener("submit", function(event) {
-		event.preventDefault();
-		if ( $('#duration').value < 1 ) {
-			alert('Duration must be greater than 1');
-			return;
-		}
-		chrome.storage.sync.set({
-			checkInterval: $("#duration").value / 4,
-			highUsage: $('#highUsage').value,
-			duration: $('#duration').value
-		}, function() {
-			$("input[type='submit']").value = "Saved sucessfully";
-			setTimeout(function() { 
-				$("input[type='submit']").value = "Save"
-			}, 2000);
-		} );
-	});
+    settings: {
+      delay: 0.1,
+      duration: 1,
+      intervals: 4,
+      checkInterval: 0.25,
+      highUsage: 5,
+    }, 
 
-	$("form").addEventListener("reset", function(event) {
-		event.preventDefault();
-		var reset = confirm("Are you sure you want to reset all options?");
-		if (reset == true) {
-			chrome.storage.sync.clear(function() { chrome.tabs.reload()});
-		} });
+    elements: {
+      form:       document.querySelector('form'),
+      highUsage:  document.querySelector('#highUsage'),
+      duration:   document.querySelector('#duration'),
+      flash:      document.querySelector('.alert')
+    },
 
-})();
+    init: function() {
+      s = this.settings;
+      el = this.elements;
+      this.bindUIActions();
+      this.setInputVals();
+    },
+
+    bindUIActions: function() {
+      var self = this;
+      el.form.addEventListener('submit', function(event) {
+        self.setStorage(event);
+      });
+      el.form.addEventListener('reset', function(event) {
+        self.clearStorage(event);
+      });
+    },
+
+    setInputVals: function() {
+      chrome.storage.sync.get({
+        highUsage:  s.highUsage,
+        duration:   s.duration,
+      }, function(syncedItems) {
+        el.highUsage.value =  syncedItems.highUsage;
+        el.duration.value =   syncedItems.duration;
+      });
+    },
+
+    setStorage: function(event) {
+      event.preventDefault();
+      if ( el.duration.value < 1 ) {
+        el.duration.setAttribute('class', 'error');
+        alert('Duration must be greater than 1');
+        return;
+      }
+      chrome.storage.sync.set({
+        checkInterval: el.duration.value / 4,
+        highUsage: el.highUsage.value,
+        duration: el.duration.value
+      }, function() {
+        el.flash.setAttribute('class', 'alert-success');
+        //el.flash.style.display = 'none'
+      } );
+    },
+
+    clearStorage: function(event) {
+      event.preventDefault();
+      chrome.storage.sync.clear(function(){
+        el.flash.setAttribute('class', 'alert-success');
+      });
+    }
+  }
+
+  Opts.init();
+
+}());
