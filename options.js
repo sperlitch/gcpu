@@ -32,6 +32,7 @@
       });
       el.form.addEventListener('reset', function(event) {
         self.clearStorage(event);
+        self.setInputVals();
       });
     },
 
@@ -46,10 +47,10 @@
     },
 
     setStorage: function(event) {
+      var self = this;
       event.preventDefault();
       if ( el.duration.value < 1 ) {
-        el.duration.setAttribute('class', 'error');
-        alert('Duration must be greater than 1');
+        alert('Duration must be greater than 1 minute');
         return;
       }
       chrome.storage.sync.set({
@@ -57,16 +58,25 @@
         highUsage: el.highUsage.value,
         duration: el.duration.value
       }, function() {
-        el.flash.style.display = 'block'
-      } );
+        self.flash();
+      });
     },
 
     clearStorage: function(event) {
+      var self = this;
       event.preventDefault();
       chrome.storage.sync.clear(function(){
-        el.flash.style.display = 'block'
+        self.flash();
       });
+    },
+
+    flash: function() {
+      el.flash.style.display = 'block';
+      window.setTimeout(function() {
+        el.flash.style.display = 'none';
+      }, 2000);
     }
+
   }
 
   Opts.init();
