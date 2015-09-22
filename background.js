@@ -10,7 +10,7 @@
       highUsage: 5,
     }, 
 
-    init: function init() {
+    init: function() {
       s = this.settings;
       this.percentageStats = [];
       this.prevCPUinfo = null,
@@ -19,7 +19,7 @@
       this.setAlarm();
     },
 
-    setOptions: function setOptions() {
+    setOptions: function() {
       chrome.storage.sync.get({
         highUsage:      s.highUsage,
         duration:       s.duration,
@@ -49,7 +49,7 @@
       );
     },
 
-    setAlarm: function setAlarm() {
+    setAlarm: function() {
       var self = this;
       chrome.alarms.create('updateStats', {
         delayInMinutes:  s.delay,
@@ -60,7 +60,7 @@
       });
     },
 
-    updateStats: function updateStats() {
+    updateStats: function() {
       console.log(this.settings);
       var self = this,
           totalUsage = 0,
@@ -103,7 +103,7 @@
       });
     },
 
-    setIcon: function setIcon(color) {
+    setIcon: function(color) {
       chrome.browserAction.setIcon({ 
         path: {
           '19': 'img/icon19-'+color+'.png',
