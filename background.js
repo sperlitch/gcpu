@@ -3,7 +3,7 @@
   CPU = {
 
     settings: {
-      delay: 1,
+      delay: 0,
       duration: 12,
       intervals: 4,
       checkInterval: 3,
@@ -56,12 +56,13 @@
     },
 
     updateStats: function() {
-      var date = new Date();
-      var self = this,
-      totalUsage = 0,
-        i = 0,
-        percent = 0,
-          arePercentagesHigh = false;
+      var self =  this,
+                  totalUsage = 0,
+                  i = 0,
+                  percent = 0,
+                  arePercentagesHigh = false;
+
+      console.log('Updating cpu stats...');
 
       chrome.system.cpu.getInfo(function(info) {
         if (self.prevCPUinfo) {
