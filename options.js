@@ -32,7 +32,7 @@
       });
       el.form.addEventListener('reset', function(event) {
         self.clearStorage(event);
-        self.setInputVals();
+        self.setDefaults();
       });
     },
 
@@ -54,9 +54,9 @@
         return;
       }
       chrome.storage.sync.set({
-        checkInterval: el.duration.value / 4,
         highUsage: el.highUsage.value,
-        duration: el.duration.value
+        duration: el.duration.value,
+        checkInterval: el.duration.value / 4
       }, function() {
         self.flash();
       });
@@ -66,6 +66,19 @@
       var self = this;
       event.preventDefault();
       chrome.storage.sync.clear(function(){
+        self.flash();
+      });
+    },
+
+    setDefaults: function() {
+      var self = this;
+      chrome.storage.sync.set({
+        checkInterval: s.checkInterval,
+        highUsage: s.highUsage,
+        duration: s.duration
+      }, function() {
+        el.highUsage.value =  s.highUsage;
+        el.duration.value =   s.duration;
         self.flash();
       });
     },

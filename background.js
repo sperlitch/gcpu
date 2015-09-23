@@ -15,11 +15,13 @@
       this.percentageStats = [];
       this.prevCPUinfo = null,
       this.setOptions();
-      this.setOnOptionsChange();
-      this.setAlarm();
     },
 
     setOptions: function() {
+      var self = this;
+      chrome.alarms.onAlarm.addListener(function( alarmInfo ) {
+        self.updateStats();
+      });
       chrome.storage.sync.get({
         highUsage:      s.highUsage,
         duration:       s.duration,
@@ -28,44 +30,37 @@
         s.duration =      syncedItems.duration;
         s.checkInterval = syncedItems.checkInterval;
         s.highUsage =     syncedItems.highUsage;
-        console.log(syncedItems);
+        self.setAlarm();
       });
-    },
-
-    setOnOptionsChange: function() {
-      chrome.storage.onChanged.addListener(
-        function() {
-          chrome.storage.sync.get({
-            highUsage:      s.highUsage,
-            duration:       s.duration,
-            checkInterval:  s.checkInterval,
-          }, function(syncedItems) {
-            s.duration =      syncedItems.duration;
-            s.checkInterval = syncedItems.checkInterval;
-            s.highUsage =     syncedItems.highUsage;
-            console.log(syncedItems);
-          })
-        }
-      );
+      chrome.storage.onChanged.addListener(function() {
+        chrome.storage.sync.get({
+          highUsage:      s.highUsage,
+          duration:       s.duration,
+          checkInterval:  s.checkInterval,
+        }, function(syncedItems) {
+          s.duration =      syncedItems.duration;
+          s.checkInterval = syncedItems.checkInterval;
+          s.highUsage =     syncedItems.highUsage;
+          self.setAlarm();
+        });
+      });
     },
 
     setAlarm: function() {
       var self = this;
+      chrome.alarms.clear('updateStats');
       chrome.alarms.create('updateStats', {
         delayInMinutes:  s.delay,
         periodInMinutes: s.checkInterval
       });
-      chrome.alarms.onAlarm.addListener(function( alarmInfo ) {
-        self.updateStats();
-      });
     },
 
     updateStats: function() {
-      console.log(this.settings);
+      var date = new Date();
       var self = this,
-          totalUsage = 0,
-          i = 0,
-          percent = 0,
+      totalUsage = 0,
+        i = 0,
+        percent = 0,
           arePercentagesHigh = false;
 
       chrome.system.cpu.getInfo(function(info) {
@@ -77,23 +72,23 @@
             var kernel = (prevUsage.kernel - usage.kernel) / (prevUsage.total - usage.total) * 100;
             totalUsage += user + kernel;
           } 
+        } else {
+          self.prevCPUinfo = info;
+          return;
         }
 
         currentPercent = Math.round(totalUsage / info.numOfProcessors);
         self.percentageStats.push(currentPercent);
         self.prevCPUinfo = info;
-        console.log(self.percentageStats);
         chrome.browserAction.setTitle({ 
           title: "using " + currentPercent + "% cpu"
         });
 
         if (self.percentageStats.length > s.intervals) {
           self.percentageStats.shift();
-          console.log(self.percentageStats);
           arePercentagesHigh = self.percentageStats.every(function(num) {
             return num > s.highUsage;
           });
-          console.log(arePercentagesHigh);
           if (arePercentagesHigh) {
             self.setIcon('red');
           } else {
