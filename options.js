@@ -4,11 +4,11 @@
   Opts = {
 
     settings: {
-      delay: 0.1,
-      duration: 1,
+      delay: 1,
+      duration: 12,
       intervals: 4,
-      checkInterval: 0.25,
-      highUsage: 5,
+      checkInterval: 3,
+      highUsage: 70,
     }, 
 
     elements: {

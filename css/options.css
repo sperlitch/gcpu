@@ -1,0 +1,27 @@
+h1 {
+  font-family: 'Oxygen', sans-serif;
+  color: darkgrey;
+  margin-bottom: 50px;
+}
+.alert {
+  display: none;
+}
+.form-actions {
+  margin-top: 50px;
+}
+.form-actions .input-group {
+  margin: 0;
+}
+img {
+  margin: 0 10px;
+}
+.form-actions input {
+  margin-right: 10px;
+}
+label {
+  font-weight: normal;
+}
+.instructions {
+  font-style: italic;
+  margin: 50px 20px;
+}
