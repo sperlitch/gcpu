@@ -9,13 +9,15 @@
       intervals: 4,
       checkInterval: 3,
       highUsage: 70,
+      notification: true
     }, 
 
     elements: {
-      form:       document.querySelector('form'),
-      highUsage:  document.querySelector('#highUsage'),
-      duration:   document.querySelector('#duration'),
-      flash:      document.querySelector('.alert')
+      form:           document.querySelector('form'),
+      highUsage:      document.querySelector('#highUsage'),
+      duration:       document.querySelector('#duration'),
+      notification:   document.querySelector('#notification'),
+      flash:          document.querySelector('.alert')
     },
 
     init: function() {
@@ -38,11 +40,13 @@
 
     setInputVals: function() {
       chrome.storage.sync.get({
-        highUsage:  s.highUsage,
-        duration:   s.duration,
+        highUsage:    s.highUsage,
+        duration:     s.duration,
+        notification: s.notification
       }, function(syncedItems) {
-        el.highUsage.value =  syncedItems.highUsage;
-        el.duration.value =   syncedItems.duration;
+        el.highUsage.value =      syncedItems.highUsage;
+        el.duration.value =       syncedItems.duration;
+        el.notification.checked = syncedItems.notification;
       });
     },
 
@@ -56,7 +60,8 @@
       chrome.storage.sync.set({
         highUsage: el.highUsage.value,
         duration: el.duration.value,
-        checkInterval: el.duration.value / 4
+        checkInterval: el.duration.value / 4,
+        notification: el.notification.checked
       }, function() {
         self.flash();
       });
@@ -75,10 +80,12 @@
       chrome.storage.sync.set({
         checkInterval: s.checkInterval,
         highUsage: s.highUsage,
-        duration: s.duration
+        duration: s.duration,
+        notification: s.notification
       }, function() {
         el.highUsage.value =  s.highUsage;
         el.duration.value =   s.duration;
+        el.notification.checked = s.notification
         self.flash();
       });
     },

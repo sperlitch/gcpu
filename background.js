@@ -3,11 +3,13 @@
   CPU = {
 
     settings: {
-      delay: 0,
+      delay: 0.1,
       duration: 12,
       intervals: 4,
       checkInterval: 3,
       highUsage: 70,
+      notification: true,
+      userHasBeenNotified: false
     }, 
 
     init: function() {
@@ -26,10 +28,12 @@
         highUsage:      s.highUsage,
         duration:       s.duration,
         checkInterval:  s.checkInterval,
+        notification:   s.notification
       }, function(syncedItems) {
         s.duration =      syncedItems.duration;
         s.checkInterval = syncedItems.checkInterval;
         s.highUsage =     syncedItems.highUsage;
+        s.notification =  syncedItems.notification;
         self.setAlarm();
       });
       chrome.storage.onChanged.addListener(function() {
@@ -37,10 +41,13 @@
           highUsage:      s.highUsage,
           duration:       s.duration,
           checkInterval:  s.checkInterval,
+          notification:   s.notification
         }, function(syncedItems) {
           s.duration =      syncedItems.duration;
           s.checkInterval = syncedItems.checkInterval;
           s.highUsage =     syncedItems.highUsage;
+          s.notification =  syncedItems.notification;
+          self.updateStats();
           self.setAlarm();
         });
       });
@@ -57,12 +64,10 @@
 
     updateStats: function() {
       var self =  this,
-                  totalUsage = 0,
-                  i = 0,
-                  percent = 0,
-                  arePercentagesHigh = false;
-
-      console.log('Updating cpu stats...');
+          totalUsage = 0,
+          i = 0,
+            percent = 0,
+            arePercentagesHigh = false;
 
       chrome.system.cpu.getInfo(function(info) {
         if (self.prevCPUinfo) {
@@ -74,31 +79,56 @@
             totalUsage += user + kernel;
           } 
         } else {
+          console.log('Initial update');
           self.prevCPUinfo = info;
           return;
         }
 
         currentPercent = Math.round(totalUsage / info.numOfProcessors);
-        self.percentageStats.push(currentPercent);
+        if (currentPercent > -1) {
+          self.percentageStats.push(currentPercent);
+          chrome.browserAction.setTitle({ 
+            title: "using " + currentPercent + "% cpu"
+          });
+        }
         self.prevCPUinfo = info;
-        chrome.browserAction.setTitle({ 
-          title: "using " + currentPercent + "% cpu"
-        });
 
         console.log(self.percentageStats);
 
-        if (self.percentageStats.length > s.intervals) {
-          self.percentageStats.shift();
+        if (self.percentageStats.length >= s.intervals) {
           arePercentagesHigh = self.percentageStats.every(function(num) {
             return num > s.highUsage;
           });
           if (arePercentagesHigh) {
             self.setIcon('red');
+            if (s.notification && ! s.userHasBeenNotified) {
+              self.notifyUser();
+              s.userHasBeenNotified = true;
+            }
           } else {
             self.setIcon('gray');
+            chrome.notifications.clear('highcpu');
+            s.userHasBeenNotified = false;
           }
+          self.percentageStats.shift();
         }
       });
+    },
+
+    notifyUser: function() {
+      chrome.notifications.create("highcpu", {
+        type: "basic",
+        title: "CPU Icon",
+        message: "Your CPU usage has been over " + s.highUsage + "% for " + s.duration + " minutes.",
+        iconUrl: "img/icon38-red.png"
+      }, function(id) {
+        s.userHasBeenNotified = true;
+      });
+      chrome.notifications.update('highcpu', {}, function() {});
+      chrome.notifications.onClosed.addListener(function() {
+        s.userHasBeenNotified = false;
+      });
+
     },
 
     setIcon: function(color) {
@@ -112,5 +142,5 @@
   }
 
   CPU.init();
-  
+
 }());
